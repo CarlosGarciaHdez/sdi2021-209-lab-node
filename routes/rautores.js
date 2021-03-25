@@ -1,22 +1,7 @@
 module.exports = function (app, swig) {
 
     app.get("/autores", function (req, res) {
-        let autores = [{
-            "nombre": "Diego",
-            "rol": "Cantante"
-        }, {
-            "nombre": "Andres",
-            "rol": "Guitarrista"
-        }, {
-            "nombre": "Sara",
-            "rol": "Bateria"
-        }, {
-            "nombre": "Lucia",
-            "rol": "Bajista"
-        }, {
-            "nombre": "Omar",
-            "rol": "Teclista"
-        }];
+        let autores = getAutores();
         let respuesta = swig.renderFile('views/autores.html', {
             vendedor: 'Lista de Autores',
             autores: autores
@@ -39,7 +24,48 @@ module.exports = function (app, swig) {
             + "Rol: " + req.body.rol);
     })
 
+    app.get("/autores/filtrar/:rol", function (req, res) {
+        let autores = getAutores(req.params.rol);
+        let respuesta = swig.renderFile('views/autores.html', {
+            vendedor: 'Lista de Autores',
+            autores: autores
+        });
+
+        res.send(respuesta);
+    });
+
     app.get('/autores/*', function (req, res) {
         res.redirect('/autores');
     })
+
+    function getAutores(rol) {
+        let autores = [{
+            "nombre": "Diego",
+            "rol": "Cantante"
+        }, {
+            "nombre": "Andres",
+            "rol": "Guitarrista"
+        }, {
+            "nombre": "Sara",
+            "rol": "Bateria"
+        }, {
+            "nombre": "Lucia",
+            "rol": "Bajista"
+        }, {
+            "nombre": "Omar",
+            "rol": "Teclista"
+        }];
+
+        if (rol == null) {
+            return autores;
+        } else {
+            let respuesta = [];
+            autores.forEach(function (autor) {
+                if (autor.rol == rol) {
+                    respuesta.push(autor);
+                }
+            })
+            return respuesta;
+        }
+    }
 };
