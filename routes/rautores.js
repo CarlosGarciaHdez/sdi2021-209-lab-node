@@ -10,6 +10,12 @@ module.exports = function (app, swig) {
         }, {
             "nombre": "Sara",
             "rol": "Bateria"
+        }, {
+            "nombre": "Lucia",
+            "rol": "Bajista"
+        }, {
+            "nombre": "Omar",
+            "rol": "Teclista"
         }];
         let respuesta = swig.renderFile('views/autores.html', {
             vendedor: 'Lista de Autores',
@@ -20,7 +26,10 @@ module.exports = function (app, swig) {
     });
 
     app.get('/autores/agregar', function (req, res) {
-        let respuesta = swig.renderFile('views/autores-agregar.html', {});
+        let roles = ["Cantante", "Bateria", "Guitarrista", "Bajista", "Teclista"];
+        let respuesta = swig.renderFile('views/autores-agregar.html', {
+            roles: roles
+        });
         res.send(respuesta);
     })
 
