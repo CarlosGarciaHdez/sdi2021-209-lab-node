@@ -1,23 +1,4 @@
 module.exports = function (app, swig, gestorBD) {
-    app.get("/canciones", function (req, res) {
-        let canciones = [{
-            "nombre": "Blank space",
-            "precio": "1.2"
-        }, {
-            "nombre": "See you again",
-            "precio": "1.3"
-        }, {
-            "nombre": "Uptown Funk",
-            "precio": "1.1"
-        }];
-        let respuesta = swig.renderFile('views/btienda.html', {
-            vendedor: 'Tienda de canciones',
-            canciones: canciones
-        });
-
-        res.send(respuesta);
-    });
-
     app.get('/canciones/agregar', function (req, res) {
         let respuesta = swig.renderFile('views/bagregar.html', {});
         res.send(respuesta);
@@ -40,16 +21,24 @@ module.exports = function (app, swig, gestorBD) {
     });
 
     app.get('/cancion/:id', function (req, res) {
-        let criterio = { "_id" : gestorBD.mongo.ObjectID(req.params.id) };
-        gestorBD.obtenerCanciones(criterio,function(canciones){
-            if ( canciones == null ){
-                res.send("Error al recuperar la canción.");
+        let criterio = {"cancion_id": gestorBD.mongo.ObjectID(req.params.id)};
+        gestorBD.obtenerComentarios(criterio, function (comentarios) {
+            if (comentarios == null) {
+                res.send("Error al recuperar los comentarios.");
             } else {
-                let respuesta = swig.renderFile('views/bcancion.html',
-                    {
-                        cancion : canciones[0]
-                    });
-                res.send(respuesta);
+                let criterio = { "_id" : gestorBD.mongo.ObjectID(req.params.id) };
+                gestorBD.obtenerCanciones(criterio,function(canciones){
+                    if ( canciones == null ){
+                        res.send("Error al recuperar la canción.");
+                    } else {
+                        let respuesta = swig.renderFile('views/bcancion.html',
+                            {
+                                comentarios: comentarios,
+                                cancion : canciones[0]
+                            });
+                        res.send(respuesta);
+                    }
+                });
             }
         });
     });

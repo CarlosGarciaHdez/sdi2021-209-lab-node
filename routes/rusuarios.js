@@ -47,6 +47,7 @@ module.exports = function(app, swig, gestorDB) {
             if (id == null){
                 res.send("Error al insertar el usuario");
             } else {
+                req.session.usuario = usuario.email;
                 res.send('Usuario Insertado ' + id);
             }
         });
