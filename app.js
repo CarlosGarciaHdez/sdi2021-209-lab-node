@@ -4,6 +4,8 @@ let app = express();
 /*
  mongodb://admin:sdi@tiendamusica-shard-00-00.yqsut.mongodb.net:27017,tiendamusica-shard-00-01.yqsut.mongodb.net:27017,tiendamusica-shard-00-02.yqsut.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-10iqbi-shard-0&authSource=admin&retryWrites=true&w=majority
  */
+let fileUpload = require('express-fileupload');
+app.use(fileUpload());
 let mongo = require('mongodb');
 let swig = require('swig');
 let bodyParser = require('body-parser');
