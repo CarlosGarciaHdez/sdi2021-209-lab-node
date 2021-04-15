@@ -4,6 +4,8 @@ let app = express();
 /*
  mongodb://admin:sdi@tiendamusica-shard-00-00.yqsut.mongodb.net:27017,tiendamusica-shard-00-01.yqsut.mongodb.net:27017,tiendamusica-shard-00-02.yqsut.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-10iqbi-shard-0&authSource=admin&retryWrites=true&w=majority
  */
+let fs = require('fs');
+let https = require('https');
 let expressSession = require('express-session');
 app.use(expressSession({
     secret: 'abcdefg',
@@ -111,7 +113,18 @@ app.get('/', function (req, res) {
     res.redirect('/tienda');
 })
 
-//Lanzar el servidor
-app.listen(app.get('port'), function () {
-    console.log("Servidor activo");
+app.use( function (err, req, res, next ){
+    console.log("Error producido: " + err);
+    if (!res.headersSent) {
+        res.status(400);
+        res.send("Rescurso no disponible");
+    }
 })
+
+//Lanzar el servidor
+https.createServer({
+    key: fs.readFileSync('certificates/alice.key'),
+    cert: fs.readFileSync('certificates/alice.crt')
+}, app).listen(app.get('port'), function() {
+    console.log("Servidor activo");
+});
