@@ -109,6 +109,11 @@ require("./routes/rcanciones.js")(app, swig, gestorBD); // (app, param1, param2,
 require("./routes/rautores.js")(app, swig, gestorBD); // (app, param1, param2, etc.)
 require("./routes/rcomentarios.js")(app, swig, gestorBD); // (app, param1, param2, etc.)
 
+app.get('/error', function (req, res) {
+    let respuesta = swig.renderFile('views/error.html', {});
+    res.send(respuesta);
+})
+
 app.get('/', function (req, res) {
     res.redirect('/tienda');
 })
@@ -117,7 +122,7 @@ app.use( function (err, req, res, next ){
     console.log("Error producido: " + err);
     if (!res.headersSent) {
         res.status(400);
-        res.send("Rescurso no disponible");
+        res.redirect("/error?mensaje=Rescurso no disponible");
     }
 })
 
