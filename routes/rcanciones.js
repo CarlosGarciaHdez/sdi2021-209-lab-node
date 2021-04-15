@@ -31,12 +31,15 @@ module.exports = function (app, swig, gestorBD) {
                     if (canciones == null) {
                         res.send("Error al recuperar la canción.");
                     } else {
-                        let respuesta = swig.renderFile('views/bcancion.html',
-                            {
-                                comentarios: comentarios,
-                                cancion: canciones[0]
-                            });
-                        res.send(respuesta);
+                        comprobarCompradoAutor(req.session.usuario, gestorBD.mongo.ObjectID(req.params.id), function (compradoOAutor){
+                            let respuesta = swig.renderFile('views/bcancion.html',
+                                {
+                                    comentarios: comentarios,
+                                    cancion: canciones[0],
+                                    compradoOAutor: compradoOAutor
+                                });
+                            res.send(respuesta);
+                        })
                     }
                 });
             }
@@ -199,13 +202,19 @@ module.exports = function (app, swig, gestorBD) {
             usuario: req.session.usuario,
             cancionId: cancionId
         }
-        gestorBD.insertarCompra(compra, function (idCompra) {
-            if (idCompra == null) {
-                res.send(respuesta);
+        comprobarCompradoAutor(compra.usuario, compra.cancionId, function (compradoOAutor){
+            if (compradoOAutor){
+                res.redirect("/compras?mensaje=La cancion ya estaba comprada o eres su autor");
             } else {
-                res.redirect("/compras");
+                gestorBD.insertarCompra(compra, function (idCompra) {
+                    if (idCompra == null) {
+                        res.send(respuesta);
+                    } else {
+                        res.redirect("/compras");
+                    }
+                });
             }
-        });
+        })
     });
 
     app.get("/publicaciones", function (req, res) {
@@ -251,5 +260,22 @@ module.exports = function (app, swig, gestorBD) {
         res.send('Respuesta patrón promo* ');
     })
 
+    function comprobarCompradoAutor(usuario, cancionId, callback) {
+        let criterio_autor = {autor : usuario, _id : gestorBD.mongo.ObjectID(cancionId)};
+        let criterio_comprado = {usuario : usuario, cancionId : gestorBD.mongo.ObjectID(cancionId)};
+        gestorBD.obtenerCompras(criterio_comprado, function(compras){
+            if(compras.length > 0){
+                return callback(true);
+            } else {
+                gestorBD.obtenerCanciones(criterio_autor, function (canciones){
+                    if(canciones.length > 0){
+                        return callback(true);
+                    } else {
+                        return callback(false);
+                    }
+                })
+            }
+        })
+    };
 
 };
