@@ -69,7 +69,15 @@
                 $( "#"+_id ).remove(); // eliminar el <tr> de la canción
             },
             error : function (error){
-                $( "#contenedor-principal" ).load("widget-login.html");
+                $("#div-errores").remove();
+                let errorAutor = error.responseJSON.errorAutor;
+                if (errorAutor != null) {
+                    $("#widget-canciones")
+                        .prepend("<div id = 'div-errores' class='alert alert-danger'> <ul id = 'ul-errores'>" + errorAutor + "</ul></div>");
+                } else {
+                    $("#widget-canciones")
+                        .prepend("<div id = 'div-errores' class='alert alert-danger'>Se ha producido un error no controlado </div>");
+                }
             }
         });
     }
