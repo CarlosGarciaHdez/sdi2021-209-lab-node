@@ -14,6 +14,8 @@ app.use(function(req, res, next) {
 /*
  mongodb://admin:sdi@tiendamusica-shard-00-00.yqsut.mongodb.net:27017,tiendamusica-shard-00-01.yqsut.mongodb.net:27017,tiendamusica-shard-00-02.yqsut.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-10iqbi-shard-0&authSource=admin&retryWrites=true&w=majority
  */
+let rest = require('request');
+app.set('rest',rest);
 let jwt = require('jsonwebtoken');
 app.set('jwt',jwt);
 let fs = require('fs');
