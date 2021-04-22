@@ -1,6 +1,16 @@
 // Modulos
 let express = require('express');
 let app = express();
+
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Methods", "POST, GET, DELETE, UPDATE, PUT");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, token");
+    // Debemos especificar todas las headers que se aceptan. Content-Type , token
+    next();
+});
+
 /*
  mongodb://admin:sdi@tiendamusica-shard-00-00.yqsut.mongodb.net:27017,tiendamusica-shard-00-01.yqsut.mongodb.net:27017,tiendamusica-shard-00-02.yqsut.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-10iqbi-shard-0&authSource=admin&retryWrites=true&w=majority
  */
